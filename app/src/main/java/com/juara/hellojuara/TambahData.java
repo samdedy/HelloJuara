@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.juara.hellojuara.model.Biodata;
 
 import java.text.SimpleDateFormat;
@@ -48,6 +49,13 @@ public class TambahData extends AppCompatActivity {
         txtCatatan = findViewById(R.id.txtCatatan);
         btnSimpan = findViewById(R.id.btnSimpan);
         btnBatal = findViewById(R.id.btnBatal);
+
+        btnBatal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         calendarLahir.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -94,6 +102,10 @@ public class TambahData extends AppCompatActivity {
             biodata.setEmail(txtEmail.getText().toString());
             biodata.setTelepon(txtTelepon.getText().toString());
             biodata.setCatatan(txtCatatan.getText().toString());
+
+            Gson gson = new Gson();
+            String json = gson.toJson(biodata);
+            showJsonDialog(json);
         } else {
             showErrorDialog();
         }
@@ -114,6 +126,23 @@ public class TambahData extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Toast.makeText(TambahData.this, "Cancel ditekan", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
+
+    public void showJsonDialog(String json){
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(TambahData.this);
+        alertDialog.setTitle("Json");
+        alertDialog.setMessage("Jsonnya adalah : " +json)
+                .setIcon(R.drawable.ic_about)
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
                     }
                 });
 
