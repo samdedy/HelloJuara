@@ -2,7 +2,9 @@ package com.juara.hellojuara;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 public class MainMenu extends AppCompatActivity {
@@ -19,6 +21,10 @@ public class MainMenu extends AppCompatActivity {
         password = getIntent().getStringExtra("password");
 
         txtUsername.setText(username);
+    }
 
+    public void screenTambahData(View view){
+        Intent intent = new Intent(MainMenu.this, TambahData.class);
+        startActivity(intent);
     }
 }

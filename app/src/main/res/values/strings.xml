@@ -3,4 +3,20 @@
     <string name="username">Username :</string>
     <string name="login">Masuk</string>
     <string name="password">Password :</string>
+    <string name="nama">Nama</string>
+    <string name="gender">Jenis Kelamin</string>
+    <string name="pekerjaan">Pekerjaan</string>
+    <string name="tanggal_lahir">Tanggal lahir</string>
+    <string name="alamat">Alamat</string>
+    <string name="email">Email</string>
+    <string name="telepon">Telepon</string>
+    <string name="catatan">Catatan</string>
+    <string name="cancel">Batal</string>
+    <string name="save">Simpan</string>
+    <string-array name="pekerjaan">
+        <item>Wiraswasta</item>
+        <item>PNS</item>
+        <item>TNI</item>
+        <item>Tidak Bekerja</item>
+    </string-array>
 </resources>
