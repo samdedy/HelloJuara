@@ -78,6 +78,12 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
             view.txtAlamat.setText(biodata.getAlamat());
             view.txtTelepon.setText(biodata.getTelepon());
             view.txtPekerjaan.setText(biodata.getPekerjaan());
+
+            if (position % 2 == 0){
+                view.image.setImageResource(R.drawable.ic_graph);
+            } else {
+                view.image.setImageResource(R.drawable.ic_about);
+            }
             view.parentLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

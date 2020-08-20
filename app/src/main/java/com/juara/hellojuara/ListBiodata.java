@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -55,6 +56,8 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
 
     @Override
     public void onItemClick(View view, Biodata obj, int position) {
-
+        ImageView v = view.findViewById(R.id.imgBiodata);
+        v.setImageResource(R.drawable.ic_close);
+        lstBiodata.invalidate();
     }
 }
