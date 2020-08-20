@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -17,11 +18,14 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.juara.hellojuara.model.Biodata;
 import com.juara.hellojuara.utility.SharedPrefUtil;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -73,7 +77,7 @@ public class TambahData extends AppCompatActivity {
 
         String dataJson = SharedPrefUtil.getInstance(TambahData.this).getString("data_input");
         if (!TextUtils.isEmpty(dataJson)){
-            mappingData(dataJson);
+//            mappingData(dataJson);
         } else {
 
         }
@@ -116,6 +120,16 @@ public class TambahData extends AppCompatActivity {
         calendarLahir.setDate(dateDummy.getTime());
     }
 
+    public List<Biodata> getModelArrayString(String json){
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<Biodata>>(){}.getType();
+        List<Biodata> biodataList = gson.fromJson(json, type);
+        for (Biodata data : biodataList){
+            Log.i("Contact Details", data.getNama()+"-"+data.getAlamat()+"-"+data.getEmail());
+        }
+        return biodataList;
+    }
+
     public boolean checkMandatory(){
         boolean pass = true;
         if (TextUtils.isEmpty(txtNama.getText().toString())){
@@ -133,32 +147,49 @@ public class TambahData extends AppCompatActivity {
 
     public void simpan(View view){
         if (checkMandatory()){
-            Biodata biodata = new Biodata();
-            biodata.setNama(txtNama.getText().toString());
+            if (!SharedPrefUtil.getInstance(TambahData.this).getString("data_input").isEmpty()) {
+                List<Biodata> datas = getModelArrayString(SharedPrefUtil.getInstance(TambahData.this).getString("data_input"));
+                datas.add(generateObjectData());
 
-            if (rbPria.isChecked()){
-                biodata.setJenis_kelamin("Pria");
-            } else if (rbWanita.isChecked()){
-                biodata.setJenis_kelamin("Wanita");
+                Gson gson = new Gson();
+                String json = gson.toJson(datas);
+                showJsonDialog(json);
+
+                SharedPrefUtil.getInstance(TambahData.this).put("data_input", json);
             } else {
-                biodata.setJenis_kelamin("Tidak diketahui");
+                List<Biodata> lstBiodata = new ArrayList<Biodata>();
+                lstBiodata.add(generateObjectData());
+
+                Gson gson = new Gson();
+                String json = gson.toJson(lstBiodata);
+                showJsonDialog(json);
+
+                SharedPrefUtil.getInstance(TambahData.this).put("data_input", json);
             }
-
-            biodata.setPekerjaan(spnPekerjaan.getSelectedItem().toString());
-            biodata.setTanggal_lahir(tanggal);
-            biodata.setAlamat(txtAlamat.getText().toString());
-            biodata.setEmail(txtEmail.getText().toString());
-            biodata.setTelepon(txtTelepon.getText().toString());
-            biodata.setCatatan(txtCatatan.getText().toString());
-
-            Gson gson = new Gson();
-            String json = gson.toJson(biodata);
-            showJsonDialog(json);
-
-            SharedPrefUtil.getInstance(TambahData.this).put("data_input", json);
         } else {
             showErrorDialog();
         }
+    }
+
+    public Biodata generateObjectData(){
+        Biodata biodata = new Biodata();
+        biodata.setNama(txtNama.getText().toString());
+
+        if (rbPria.isChecked()){
+            biodata.setJenis_kelamin("Pria");
+        } else if (rbWanita.isChecked()){
+            biodata.setJenis_kelamin("Wanita");
+        } else {
+            biodata.setJenis_kelamin("Tidak diketahui");
+        }
+
+        biodata.setPekerjaan(spnPekerjaan.getSelectedItem().toString());
+        biodata.setTanggal_lahir(tanggal);
+        biodata.setAlamat(txtAlamat.getText().toString());
+        biodata.setEmail(txtEmail.getText().toString());
+        biodata.setTelepon(txtTelepon.getText().toString());
+        biodata.setCatatan(txtCatatan.getText().toString());
+        return biodata;
     }
 
     public void showErrorDialog(){
