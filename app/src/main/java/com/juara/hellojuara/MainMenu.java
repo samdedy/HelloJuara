@@ -27,4 +27,9 @@ public class MainMenu extends AppCompatActivity {
         Intent intent = new Intent(MainMenu.this, TambahData.class);
         startActivity(intent);
     }
+
+    public void screenListData(View view){
+        Intent intent = new Intent(MainMenu.this, ListBiodata.class);
+        startActivity(intent);
+    }
 }
