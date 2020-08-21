@@ -153,7 +153,19 @@ public class TambahData extends AppCompatActivity {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    mDb.biodataDAO().insertAll(generateObjectData());
+                    Biodata biodata = null;
+                    biodata = mDb.biodataDAO().findByTelepon(txtTelepon.getText().toString());
+                    if (biodata != null){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showErrorDialogDifferentContent();
+                            }
+                        });
+                    } else {
+                        mDb.biodataDAO().insertAll(generateObjectData());
+                        finish();
+                    }
                 }
             }).start();
         } else {
@@ -199,6 +211,28 @@ public class TambahData extends AppCompatActivity {
                         Toast.makeText(TambahData.this, "Cancel ditekan", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
+
+    public void showErrorDialogDifferentContent(){
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(TambahData.this);
+        alertDialog.setTitle("Peringatan");
+        alertDialog.setMessage("Mohon masukkan telepon yang berbeda")
+                .setIcon(R.drawable.ic_close)
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(TambahData.this, "Cancel ditekan", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         AlertDialog alert = alertDialog.create();
         alert.show();
