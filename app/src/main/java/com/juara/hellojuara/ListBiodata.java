@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -23,14 +25,32 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
 
     RecyclerView lstBiodata;
     private AppDatabase mDb;
+    private Button btnCari;
+    private EditText txtCari;
+    String textCari;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_biodata);
 
+        txtCari = findViewById(R.id.txtCari);
+        btnCari = findViewById(R.id.btnCari);
         lstBiodata = findViewById(R.id.lstBiodata);
         mDb = AppDatabase.getInstance(getApplicationContext());
+
+        btnCari.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textCari = txtCari.getText().toString();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadDatabase(textCari);
+                    }
+                }).start();
+            }
+        });
 
         new Thread(new Runnable() {
             @Override
@@ -60,6 +80,21 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
     public void loadDatabase(){
         List<Biodata> biodataList = null;
         biodataList = mDb.biodataDAO().getAll();
+        adapter = new AdapterListBasic(ListBiodata.this, biodataList);
+        adapter.setOnItemClickListener(ListBiodata.this);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                lstBiodata.setLayoutManager(new LinearLayoutManager(ListBiodata.this));
+                lstBiodata.setItemAnimator(new DefaultItemAnimator());
+                lstBiodata.setAdapter(adapter);
+            }
+        });
+    }
+
+    public void loadDatabase(String cari){
+        List<Biodata> biodataList = null;
+        biodataList = mDb.biodataDAO().findByNama(cari);
         adapter = new AdapterListBasic(ListBiodata.this, biodataList);
         adapter.setOnItemClickListener(ListBiodata.this);
         runOnUiThread(new Runnable() {

@@ -12,6 +12,9 @@ public interface BiodataDAO {
     @Query("SELECT * FROM Biodata")
     List<Biodata> getAll();
 
+    @Query("SELECT * FROM Biodata WHERE nama LIKE '%' || :nama || '%'")
+    List<Biodata> findByNama(String nama);
+
     @Insert
     void insertAll(Biodata... users);
 
