@@ -22,6 +22,7 @@ import java.util.List;
 public class ListBiodata extends AppCompatActivity implements AdapterListBasic.OnItemClickListener {
 
     RecyclerView lstBiodata;
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +30,14 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
         setContentView(R.layout.activity_list_biodata);
 
         lstBiodata = findViewById(R.id.lstBiodata);
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
-        if (loadData() != null){
-            AdapterListBasic adapter = new AdapterListBasic(ListBiodata.this, loadData());
-            adapter.setOnItemClickListener(ListBiodata.this);
-            lstBiodata.setLayoutManager(new LinearLayoutManager(ListBiodata.this));
-            lstBiodata.setItemAnimator(new DefaultItemAnimator());
-            lstBiodata.setAdapter(adapter);
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadDatabase();
+            }
+        }).start();
     }
 
     public List<Biodata> loadData(){
@@ -52,6 +53,23 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
         }
 
         return biodataList;
+    }
+
+    AdapterListBasic adapter;
+
+    public void loadDatabase(){
+        List<Biodata> biodataList = null;
+        biodataList = mDb.biodataDAO().getAll();
+        adapter = new AdapterListBasic(ListBiodata.this, biodataList);
+        adapter.setOnItemClickListener(ListBiodata.this);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                lstBiodata.setLayoutManager(new LinearLayoutManager(ListBiodata.this));
+                lstBiodata.setItemAnimator(new DefaultItemAnimator());
+                lstBiodata.setAdapter(adapter);
+            }
+        });
     }
 
     @Override

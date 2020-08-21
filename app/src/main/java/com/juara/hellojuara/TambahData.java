@@ -40,6 +40,7 @@ public class TambahData extends AppCompatActivity {
     Button btnSimpan, btnBatal;
 
     String tanggal = "";
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,8 @@ public class TambahData extends AppCompatActivity {
                 finish();
             }
         });
+
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         calendarLahir.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -147,25 +150,12 @@ public class TambahData extends AppCompatActivity {
 
     public void simpan(View view){
         if (checkMandatory()){
-            if (!SharedPrefUtil.getInstance(TambahData.this).getString("data_input").isEmpty()) {
-                List<Biodata> datas = getModelArrayString(SharedPrefUtil.getInstance(TambahData.this).getString("data_input"));
-                datas.add(generateObjectData());
-
-                Gson gson = new Gson();
-                String json = gson.toJson(datas);
-                showJsonDialog(json);
-
-                SharedPrefUtil.getInstance(TambahData.this).put("data_input", json);
-            } else {
-                List<Biodata> lstBiodata = new ArrayList<Biodata>();
-                lstBiodata.add(generateObjectData());
-
-                Gson gson = new Gson();
-                String json = gson.toJson(lstBiodata);
-                showJsonDialog(json);
-
-                SharedPrefUtil.getInstance(TambahData.this).put("data_input", json);
-            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mDb.biodataDAO().insertAll(generateObjectData());
+                }
+            }).start();
         } else {
             showErrorDialog();
         }
