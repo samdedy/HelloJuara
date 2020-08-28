@@ -14,7 +14,8 @@
 
         </activity>
         <activity android:name=".ListBiodata" />
-        <activity android:name=".TambahData" />
+        <activity android:name=".TambahData"
+            android:parentActivityName=".MainMenu"/>
         <activity android:name=".MainMenu" />
         <activity android:name=".MainActivity">
             <intent-filter>

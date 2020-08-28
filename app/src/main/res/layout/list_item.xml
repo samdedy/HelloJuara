@@ -78,8 +78,18 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/holo_red_light"
+                android:backgroundTint="@android:color/holo_red_light"
                 android:text="Delete"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnEdit" />
+
+            <Button
+                android:id="@+id/btnEdit"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/holo_blue_light"
+                android:text="Edit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtTelepon" />
         </androidx.constraintlayout.widget.ConstraintLayout>

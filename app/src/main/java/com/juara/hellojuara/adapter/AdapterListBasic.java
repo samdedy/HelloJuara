@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.juara.hellojuara.ListBiodata;
 import com.juara.hellojuara.R;
+import com.juara.hellojuara.TambahData;
 import com.juara.hellojuara.model.Biodata;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
         public TextView txtTelepon;
         public TextView txtPekerjaan;
         public CardView parentLayout;
-        public Button btnDelete;
+        public Button btnDelete, btnEdit;
 
 
 
@@ -63,6 +64,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
             txtTelepon = v.findViewById(R.id.txtTelepon);
             parentLayout = v.findViewById(R.id.layout_utama);
             btnDelete = v.findViewById(R.id.btnDelete);
+            btnEdit = v.findViewById(R.id.btnEdit);
         }
     }
 
@@ -110,7 +112,26 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                     holder.itemView.getContext().startActivity(myIntent);
                 }
             });
+            view.btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent myIntent = new Intent(holder.itemView.getContext(), TambahData.class);
+                    myIntent.putExtra("flag", 110);
+                    myIntent.putExtra("nama", items.get(holder.getAdapterPosition()).getNama());
+                    myIntent.putExtra("jenis_kelamin", items.get(holder.getAdapterPosition()).getJenis_kelamin());
+                    myIntent.putExtra("pekerjaan", items.get(holder.getAdapterPosition()).getPekerjaan());
+                    myIntent.putExtra("tanggal_lahir", items.get(holder.getAdapterPosition()).getTanggal_lahir());
+                    myIntent.putExtra("alamat", items.get(holder.getAdapterPosition()).getAlamat());
+                    myIntent.putExtra("telepon", items.get(holder.getAdapterPosition()).getTelepon());
+                    myIntent.putExtra("email", items.get(holder.getAdapterPosition()).getEmail());
+                    myIntent.putExtra("catatan", items.get(holder.getAdapterPosition()).getCatatan());
+                    holder.itemView.getContext().startActivity(myIntent);
+//                    mDatabase.child("biodata").child(items.get(holder.getAdapterPosition()).getTelepon()).setValue(null);
+//                    Toast.makeText(holder.itemView.getContext(),"data "+items.get(holder.getAdapterPosition()).getTelepon()+" terupdate",Toast.LENGTH_SHORT).show();
+//                    notifyDataSetChanged();
 
+                }
+            });
         }
     }
 

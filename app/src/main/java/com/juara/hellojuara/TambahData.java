@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,7 +42,7 @@ public class TambahData extends AppCompatActivity {
     EditText txtAlamat, txtTelepon, txtEmail, txtCatatan;
     private DatabaseReference mDatabase;
     Button btnSimpan, btnBatal;
-
+    int editData;
     String tanggal = "";
     private AppDatabase mDb;
 
@@ -61,6 +62,8 @@ public class TambahData extends AppCompatActivity {
         txtCatatan = findViewById(R.id.txtCatatan);
         btnSimpan = findViewById(R.id.btnSimpan);
         btnBatal = findViewById(R.id.btnBatal);
+
+        mappingEditData();
 
         btnBatal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +130,44 @@ public class TambahData extends AppCompatActivity {
         calendarLahir.setDate(dateDummy.getTime());
     }
 
+    public void mappingEditData(){
+        editData = getIntent().getIntExtra("flag",0);
+        if (editData == 110){
+            txtNama.setText(getIntent().getStringExtra("nama"));
+
+            if (getIntent().getStringExtra("jenis_kelamin").equalsIgnoreCase("Pria")){
+                rbPria.setChecked(true);
+                rbWanita.setChecked(false);
+            } else if (getIntent().getStringExtra("jenis_kelamin").equalsIgnoreCase("Wanita")){
+                rbWanita.setChecked(true);
+                rbPria.setChecked(false);
+            } else {
+                rbPria.setChecked(false);
+                rbWanita.setChecked(false);
+            }
+
+            List<String> lstPekerjaan = Arrays.asList(getResources().getStringArray(R.array.pekerjaan));
+
+            for(int x=0; x<lstPekerjaan.size(); x++){
+                if (lstPekerjaan.get(x).equalsIgnoreCase(getIntent().getStringExtra("pekerjaan"))){
+                    spnPekerjaan.setSelection(x);
+                }
+            }
+            txtAlamat.setText(getIntent().getStringExtra("alamat"));
+            txtTelepon.setText(getIntent().getStringExtra("telepon"));
+            txtEmail.setText(getIntent().getStringExtra("email"));
+            txtCatatan.setText(getIntent().getStringExtra("catatan"));
+
+            Date dateDummy = null;
+            try {
+                dateDummy = new SimpleDateFormat("dd-MMMM-yyyy").parse(getIntent().getStringExtra("tanggal_lahir"));
+            } catch (ParseException e){
+                e.printStackTrace();
+            }
+            calendarLahir.setDate(dateDummy.getTime());
+        }
+    }
+
     public List<Biodata> getModelArrayString(String json){
         Gson gson = new Gson();
         Type type = new TypeToken<List<Biodata>>(){}.getType();
@@ -159,7 +200,7 @@ public class TambahData extends AppCompatActivity {
                 public void run() {
                     Biodata biodata = null;
                     biodata = mDb.biodataDAO().findByTelepon(txtTelepon.getText().toString());
-                    if (biodata != null){
+                    if (biodata != null && editData != 110){
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -167,9 +208,10 @@ public class TambahData extends AppCompatActivity {
                             }
                         });
                     } else {
-                        mDb.biodataDAO().insertAll(generateObjectData());
+//                        mDb.biodataDAO().insertAll(generateObjectData());
                         //mDatabase.setValue(generateObjectData());// menimpa data di firebase
                         mDatabase.child("biodata").child(generateObjectData().getTelepon()).setValue(generateObjectData()); // add per ID key Telepon, namun apabila nilai id / parent nya sama maka akan mengupdate data
+                        finish();
                     }
                 }
             }).start();

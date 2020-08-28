@@ -39,6 +39,8 @@ public class DaftarUser extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    Toast.makeText(DaftarUser.this, "User telah di daftarkan", Toast.LENGTH_SHORT).show();
+                                    finish();
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(DaftarUser.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
