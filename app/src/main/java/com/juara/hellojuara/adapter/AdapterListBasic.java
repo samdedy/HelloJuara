@@ -1,16 +1,22 @@
 package com.juara.hellojuara.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.juara.hellojuara.ListBiodata;
 import com.juara.hellojuara.R;
 import com.juara.hellojuara.model.Biodata;
 
@@ -20,7 +26,7 @@ import java.util.List;
 public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Biodata> items = new ArrayList<>();
-
+    private DatabaseReference mDatabase;
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
 
@@ -44,6 +50,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
         public TextView txtTelepon;
         public TextView txtPekerjaan;
         public CardView parentLayout;
+        public Button btnDelete;
 
 
 
@@ -55,7 +62,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
             txtPekerjaan = v.findViewById(R.id.txtPekerjaan);
             txtTelepon = v.findViewById(R.id.txtTelepon);
             parentLayout = v.findViewById(R.id.layout_utama);
-
+            btnDelete = v.findViewById(R.id.btnDelete);
         }
     }
 
@@ -69,8 +76,9 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof OriginalViewHolder) {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
             Biodata biodata = items.get(position);
@@ -90,6 +98,16 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (mOnItemClickListener != null) {
                         mOnItemClickListener.onItemClick(view, items.get(position), position);
                     }
+                }
+            });
+            view.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDatabase.child("biodata").child(items.get(holder.getAdapterPosition()).getTelepon()).setValue(null);
+                    Toast.makeText(holder.itemView.getContext(),"data "+items.get(holder.getAdapterPosition()).getTelepon()+" terhapus",Toast.LENGTH_SHORT).show();
+//                    notifyDataSetChanged();
+                    Intent myIntent = new Intent(holder.itemView.getContext(), ListBiodata.class);
+                    holder.itemView.getContext().startActivity(myIntent);
                 }
             });
 
