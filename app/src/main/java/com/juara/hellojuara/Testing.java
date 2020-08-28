@@ -25,13 +25,14 @@ public class Testing extends AppCompatActivity {
         setContentView(R.layout.test);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("biodata").setValue(null); // delete child = "biodata"
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<HashMap<String, Object>> objectsGTypeInd = new GenericTypeIndicator<HashMap<String, Object>>() {};
-                Map<String, Object> objectHashMap = dataSnapshot.getValue(objectsGTypeInd);
-                ArrayList<Object> objectArrayList = new ArrayList<Object>(objectHashMap.values());
+//                GenericTypeIndicator<HashMap<String, Object>> objectsGTypeInd = new GenericTypeIndicator<HashMap<String, Object>>() {};
+//                Map<String, Object> objectHashMap = dataSnapshot.getValue(objectsGTypeInd);
+//                ArrayList<Object> objectArrayList = new ArrayList<Object>(objectHashMap.values());
 
                 // get data firebase
                 // dataSnapshot.getValue();

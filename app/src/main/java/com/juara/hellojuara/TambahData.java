@@ -17,6 +17,8 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.juara.hellojuara.model.Biodata;
@@ -37,6 +39,7 @@ public class TambahData extends AppCompatActivity {
     Spinner spnPekerjaan;
     CalendarView calendarLahir;
     EditText txtAlamat, txtTelepon, txtEmail, txtCatatan;
+    private DatabaseReference mDatabase;
     Button btnSimpan, btnBatal;
 
     String tanggal = "";
@@ -84,6 +87,7 @@ public class TambahData extends AppCompatActivity {
         } else {
 
         }
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     public void mappingData(String json){
@@ -164,7 +168,8 @@ public class TambahData extends AppCompatActivity {
                         });
                     } else {
                         mDb.biodataDAO().insertAll(generateObjectData());
-                        finish();
+                        //mDatabase.setValue(generateObjectData());// menimpa data di firebase
+                        mDatabase.child("biodata").child(generateObjectData().getTelepon()).setValue(generateObjectData()); // add per ID key Telepon, namun apabila nilai id / parent nya sama maka akan mengupdate data
                     }
                 }
             }).start();
