@@ -1,5 +1,6 @@
 package com.juara.hellojuara;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +13,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.juara.hellojuara.adapter.AdapterListBasic;
@@ -19,14 +25,17 @@ import com.juara.hellojuara.model.Biodata;
 import com.juara.hellojuara.utility.SharedPrefUtil;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListBiodata extends AppCompatActivity implements AdapterListBasic.OnItemClickListener {
 
     RecyclerView lstBiodata;
+    private List<Biodata> biodataList;
     private AppDatabase mDb;
     private Button btnCari;
     private EditText txtCari;
+    private AdapterListBasic adapter;
     String textCari;
 
     @Override
@@ -37,6 +46,9 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
         txtCari = findViewById(R.id.txtCari);
         btnCari = findViewById(R.id.btnCari);
         lstBiodata = findViewById(R.id.lstBiodata);
+        lstBiodata.setHasFixedSize(true);
+        lstBiodata.setLayoutManager(new LinearLayoutManager(this));
+
         mDb = AppDatabase.getInstance(getApplicationContext());
 
         btnCari.setOnClickListener(new View.OnClickListener() {
@@ -55,7 +67,7 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
         new Thread(new Runnable() {
             @Override
             public void run() {
-                loadDatabase();
+                loadDataFirebase();
             }
         }).start();
     }
@@ -74,8 +86,6 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
 
         return biodataList;
     }
-
-    AdapterListBasic adapter;
 
     public void loadDatabase(){
         List<Biodata> biodataList = null;
@@ -103,6 +113,29 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
                 lstBiodata.setLayoutManager(new LinearLayoutManager(ListBiodata.this));
                 lstBiodata.setItemAnimator(new DefaultItemAnimator());
                 lstBiodata.setAdapter(adapter);
+            }
+        });
+    }
+
+    public void loadDataFirebase(){
+        biodataList = new ArrayList<>();
+        final DatabaseReference nm = FirebaseDatabase.getInstance().getReference("biodata");
+        nm.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot npsnapshot : dataSnapshot.getChildren()){
+                        Biodata b = npsnapshot.getValue(Biodata.class);
+                        biodataList.add(b);
+                    }
+                    adapter = new AdapterListBasic(ListBiodata.this,biodataList);
+                    lstBiodata.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
