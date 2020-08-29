@@ -1,6 +1,7 @@
 package com.juara.hellojuara;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,10 +19,17 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.common.internal.Constants;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.juara.hellojuara.adapter.AdapterListBasic;
 import com.juara.hellojuara.model.Biodata;
 import com.juara.hellojuara.utility.SharedPrefUtil;
 
@@ -200,7 +208,31 @@ public class TambahData extends AppCompatActivity {
                 public void run() {
                     Biodata biodata = null;
                     biodata = mDb.biodataDAO().findByTelepon(txtTelepon.getText().toString());
-                    if (biodata != null && editData != 110){
+
+//                    String key = mDatabase.child("biodata").push().getKey();
+
+
+
+//                    Query mQuery = mDatabase.child("biodata").child("telepon").equalTo(txtTelepon.getText().toString());
+//                    mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    showErrorDialogDifferentContent();
+//                                }
+//                            });
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//                            Toast.makeText(TambahData.this, "gagal", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//
+
+                    if (biodata != null){
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -208,10 +240,15 @@ public class TambahData extends AppCompatActivity {
                             }
                         });
                     } else {
-//                        mDb.biodataDAO().insertAll(generateObjectData());
+                        mDb.biodataDAO().insertAll(generateObjectData());
                         //mDatabase.setValue(generateObjectData());// menimpa data di firebase
                         mDatabase.child("biodata").child(generateObjectData().getTelepon()).setValue(generateObjectData()); // add per ID key Telepon, namun apabila nilai id / parent nya sama maka akan mengupdate data
-                        finish();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showDialogInfo();
+                            }
+                        });
                     }
                 }
             }).start();
@@ -279,6 +316,23 @@ public class TambahData extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 Toast.makeText(TambahData.this, "Cancel ditekan", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
+
+    public void showDialogInfo(){
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(TambahData.this);
+        alertDialog.setTitle("Tambah Data");
+        alertDialog.setMessage("Berhasil tambah data")
+                .setIcon(R.drawable.ic_input)
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
         });
 
         AlertDialog alert = alertDialog.create();
