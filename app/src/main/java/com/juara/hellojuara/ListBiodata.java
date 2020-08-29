@@ -51,6 +51,8 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
 
         mDb = AppDatabase.getInstance(getApplicationContext());
 
+        loadDataFirebase();
+
         btnCari.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,7 +69,7 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
         new Thread(new Runnable() {
             @Override
             public void run() {
-                loadDataFirebase();
+                loadDatabase();
             }
         }).start();
     }
