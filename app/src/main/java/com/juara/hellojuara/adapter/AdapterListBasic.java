@@ -12,10 +12,12 @@ import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.juara.hellojuara.AppDatabase;
 import com.juara.hellojuara.ListBiodata;
 import com.juara.hellojuara.R;
 import com.juara.hellojuara.TambahData;
@@ -26,7 +28,8 @@ import java.util.List;
 
 public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Biodata> items = new ArrayList<>();
+    private AppDatabase mDb;
+    private List<Biodata> items;
     private DatabaseReference mDatabase;
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
@@ -42,6 +45,9 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
     public AdapterListBasic(Context context, List<Biodata> items) {
         this.items = items;
         ctx = context;
+        mDb = Room.databaseBuilder(context.getApplicationContext(),
+                AppDatabase.class, "biodata_db").allowMainThreadQueries().build();
+        mOnItemClickListener = (ListBiodata)context;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
@@ -105,11 +111,11 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
             view.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mDatabase.child("biodata").child(items.get(holder.getAdapterPosition()).getTelepon()).setValue(null);
-                    Toast.makeText(holder.itemView.getContext(),"data "+items.get(holder.getAdapterPosition()).getTelepon()+" terhapus",Toast.LENGTH_SHORT).show();
-//                    notifyDataSetChanged();
-                    Intent myIntent = new Intent(holder.itemView.getContext(), ListBiodata.class);
-                    holder.itemView.getContext().startActivity(myIntent);
+                    mDatabase.child("biodata").child(items.get(position).getTelepon()).setValue(null);
+                    mDb.biodataDAO().deleteBiodata(items.get(position));
+                    items.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeRemoved(position, items.size());
                 }
             });
             view.btnEdit.setOnClickListener(new View.OnClickListener() {

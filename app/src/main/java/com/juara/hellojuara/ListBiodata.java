@@ -12,7 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,7 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
     RecyclerView lstBiodata;
     private List<Biodata> biodataList;
     private AppDatabase mDb;
+    private DatabaseReference mDbFirebase;
     private Button btnCari;
     private EditText txtCari;
     private AdapterListBasic adapter;
@@ -121,8 +124,8 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
 
     public void loadDataFirebase(){
         biodataList = new ArrayList<>();
-        final DatabaseReference nm = FirebaseDatabase.getInstance().getReference("biodata");
-        nm.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDbFirebase = FirebaseDatabase.getInstance().getReference("biodata");
+        mDbFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){

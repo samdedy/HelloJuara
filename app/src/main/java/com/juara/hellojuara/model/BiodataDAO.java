@@ -22,5 +22,5 @@ public interface BiodataDAO {
     void insertAll(Biodata... users);
 
     @Delete
-    void delete(Biodata user);
+    void deleteBiodata(Biodata biodata);
 }
