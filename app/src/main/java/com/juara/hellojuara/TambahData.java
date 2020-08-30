@@ -50,7 +50,7 @@ public class TambahData extends AppCompatActivity {
     EditText txtAlamat, txtTelepon, txtEmail, txtCatatan;
     private DatabaseReference mDatabase;
     Button btnSimpan, btnBatal;
-    int editData;
+    int editData = 0;
     String tanggal = "";
     private AppDatabase mDb;
 
@@ -70,6 +70,8 @@ public class TambahData extends AppCompatActivity {
         txtCatatan = findViewById(R.id.txtCatatan);
         btnSimpan = findViewById(R.id.btnSimpan);
         btnBatal = findViewById(R.id.btnBatal);
+
+        editData = getIntent().getIntExtra("flag",0);
 
         mappingEditData();
 
@@ -139,7 +141,6 @@ public class TambahData extends AppCompatActivity {
     }
 
     public void mappingEditData(){
-        editData = getIntent().getIntExtra("flag",0);
         if (editData == 110){
             txtNama.setText(getIntent().getStringExtra("nama"));
 
@@ -165,10 +166,10 @@ public class TambahData extends AppCompatActivity {
             txtTelepon.setText(getIntent().getStringExtra("telepon"));
             txtEmail.setText(getIntent().getStringExtra("email"));
             txtCatatan.setText(getIntent().getStringExtra("catatan"));
-
+            tanggal = getIntent().getStringExtra("tanggal_lahir");
             Date dateDummy = null;
             try {
-                dateDummy = new SimpleDateFormat("dd-MMMM-yyyy").parse(getIntent().getStringExtra("tanggal_lahir"));
+                dateDummy = new SimpleDateFormat("dd-MMMM-yyyy").parse(tanggal);
             } catch (ParseException e){
                 e.printStackTrace();
             }
@@ -207,7 +208,11 @@ public class TambahData extends AppCompatActivity {
                 @Override
                 public void run() {
                     Biodata biodata = null;
-                    biodata = mDb.biodataDAO().findByTelepon(txtTelepon.getText().toString());
+                    if (editData == 110){
+                        biodata = null;
+                    } else {
+                        biodata = mDb.biodataDAO().findByTelepon(txtTelepon.getText().toString());
+                    }
 
 //                    String key = mDatabase.child("biodata").push().getKey();
 
@@ -240,9 +245,13 @@ public class TambahData extends AppCompatActivity {
                             }
                         });
                     } else {
-                        mDb.biodataDAO().insertAll(generateObjectData());
                         //mDatabase.setValue(generateObjectData());// menimpa data di firebase
                         mDatabase.child("biodata").child(generateObjectData().getTelepon()).setValue(generateObjectData()); // add per ID key Telepon, namun apabila nilai id / parent nya sama maka akan mengupdate data
+                        if (editData == 110) {
+                            mDb.biodataDAO().updateBiodata(generateObjectData());
+                        } else {
+                            mDb.biodataDAO().insertAll(generateObjectData());
+                        }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -324,9 +333,9 @@ public class TambahData extends AppCompatActivity {
 
     public void showDialogInfo(){
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(TambahData.this);
-        alertDialog.setTitle("Tambah Data");
-        alertDialog.setMessage("Berhasil tambah data")
-                .setIcon(R.drawable.ic_input)
+        alertDialog.setTitle(editData != 110?"Tambah Data":"Edit Data");
+        alertDialog.setMessage(editData != 110?"Berhasil tambah data":"Berhasil Edit data")
+                .setIcon(R.drawable.ic_about)
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
@@ -337,6 +346,7 @@ public class TambahData extends AppCompatActivity {
 
         AlertDialog alert = alertDialog.create();
         alert.show();
+        Toast.makeText(TambahData.this, "Klik tombol Cari untuk merefrest",Toast.LENGTH_LONG).show();
     }
 
     public void showJsonDialog(String json){
