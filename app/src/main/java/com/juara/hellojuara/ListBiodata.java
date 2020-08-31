@@ -51,7 +51,7 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
         lstBiodata = findViewById(R.id.lstBiodata);
         lstBiodata.setHasFixedSize(true);
         lstBiodata.setLayoutManager(new LinearLayoutManager(this));
-
+        mDbFirebase = FirebaseDatabase.getInstance().getReference("biodata");
         mDb = AppDatabase.getInstance(getApplicationContext());
 
         loadDataFirebase();
@@ -123,18 +123,26 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
     }
 
     public void loadDataFirebase(){
-        biodataList = new ArrayList<>();
         mDbFirebase = FirebaseDatabase.getInstance().getReference("biodata");
         mDbFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
+                    biodataList = new ArrayList<>();
                     for (DataSnapshot npsnapshot : dataSnapshot.getChildren()){
                         Biodata b = npsnapshot.getValue(Biodata.class);
                         biodataList.add(b);
                     }
                     adapter = new AdapterListBasic(ListBiodata.this,biodataList);
                     lstBiodata.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lstBiodata.setLayoutManager(new LinearLayoutManager(ListBiodata.this));
+                        lstBiodata.setItemAnimator(new DefaultItemAnimator());
+                        lstBiodata.setAdapter(adapter);
+                    }});
                 }
             }
 
@@ -150,5 +158,11 @@ public class ListBiodata extends AppCompatActivity implements AdapterListBasic.O
         ImageView v = view.findViewById(R.id.imgBiodata);
         v.setImageResource(R.drawable.ic_close);
         lstBiodata.invalidate();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadDataFirebase();
     }
 }

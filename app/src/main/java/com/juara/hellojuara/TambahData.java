@@ -214,29 +214,6 @@ public class TambahData extends AppCompatActivity {
                         biodata = mDb.biodataDAO().findByTelepon(txtTelepon.getText().toString());
                     }
 
-//                    String key = mDatabase.child("biodata").push().getKey();
-
-
-
-//                    Query mQuery = mDatabase.child("biodata").child("telepon").equalTo(txtTelepon.getText().toString());
-//                    mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    showErrorDialogDifferentContent();
-//                                }
-//                            });
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//                            Toast.makeText(TambahData.this, "gagal", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//
-
                     if (biodata != null){
                         runOnUiThread(new Runnable() {
                             @Override
@@ -346,7 +323,6 @@ public class TambahData extends AppCompatActivity {
 
         AlertDialog alert = alertDialog.create();
         alert.show();
-        Toast.makeText(TambahData.this, "Klik tombol Cari untuk merefrest",Toast.LENGTH_LONG).show();
     }
 
     public void showJsonDialog(String json){
