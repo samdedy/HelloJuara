@@ -32,4 +32,9 @@ public class MainMenu extends AppCompatActivity {
         Intent intent = new Intent(MainMenu.this, ListBiodata.class);
         startActivity(intent);
     }
+
+    public void screenChatting(View view){
+        Intent intent = new Intent(MainMenu.this, Chatting.class);
+        startActivity(intent);
+    }
 }

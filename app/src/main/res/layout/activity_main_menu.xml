@@ -134,16 +134,17 @@
                     android:id="@+id/imageView2"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
+                    android:onClick="screenChatting"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_about" />
+                    app:srcCompat="@drawable/ic_message" />
 
                 <TextView
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tambah Data"
+                    android:text="Chatting"
                     app:layout_constraintEnd_toEndOf="@+id/imageView2"
                     app:layout_constraintHorizontal_bias="0.529"
                     app:layout_constraintStart_toStartOf="@+id/imageView2"
